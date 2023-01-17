@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Login</title>
+</head>
+<body>
+<div class="container-fluid">
+    <h2>LogIn Page</h2>
+    <div th:if="${param.error}">Invalid username and password.</div>
+    <div th:if="${param.logout}">You have been logged out.</div>
+    <form th:action="@{/form-login}" method="POST">
+        <label>Username:</label >
+        <input type="text" name="username" /><br>
+        <label >Password:</label >
+        <input type="password" name="password" /><br>
+        <input type="submit" value="LogIn" />
+    </form>
+</div>
+</body>
+</html>
