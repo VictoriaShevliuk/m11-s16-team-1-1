@@ -8,11 +8,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -31,20 +28,18 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/users/create", LOGIN_PAGE).permitAll()
                 .anyRequest().authenticated()
                     .and()
                 .formLogin()
                 .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl(LOGIN_PAGE)
                 .failureUrl(LOGIN_PAGE + "?error")
-                //.failureUrl(LOGIN_PAGE)
                 .defaultSuccessUrl("/home")
                 .permitAll()
                     .and()
                 .logout()
                 //.logoutUrl("/perform-logout")
-                //.logoutUrl(LOGIN_PAGE + "?logout=true")
-                //.logoutSuccessUrl(LOGIN_PAGE + "(logout=true)")
                 //.logoutSuccessUrl(LOGIN_PAGE + "?logout")
                 .deleteCookies("JSESSIONID")
                     .and()
@@ -57,11 +52,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-
-//        auth.inMemoryAuthentication()
-//                .withUser("mike@mail.com")
-//                .password("{noop}123")
-//                .roles("ADMIN");
 
     }
 }
