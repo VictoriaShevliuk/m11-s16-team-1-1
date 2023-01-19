@@ -4,6 +4,8 @@ import com.softserve.itacademy.exception.NullEntityReferenceException;
 import com.softserve.itacademy.model.ToDo;
 import com.softserve.itacademy.repository.ToDoRepository;
 import com.softserve.itacademy.service.ToDoService;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,6 +30,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @PostFilter("filterObject == authentication.principal")
     public ToDo readById(long id) {
         return todoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("ToDo with id " + id + " not found"));
@@ -54,6 +57,8 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    //@PostFilter("hasRole('ROLE_ADMIN') or filterObject.owner.getEmail() == authentication.name or filterObject.getCollaborators().contains(authentication.principal)")
+    @PostFilter("hasRole('ROLE_ADMIN') or filterObject.getOwner().getEmail() == authentication.name")
     public List<ToDo> getByUserId(long userId) {
         List<ToDo> todos = todoRepository.getByUserId(userId);
         return todos.isEmpty() ? new ArrayList<>() : todos;

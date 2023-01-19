@@ -4,6 +4,9 @@ import com.softserve.itacademy.exception.NullEntityReferenceException;
 import com.softserve.itacademy.model.User;
 import com.softserve.itacademy.repository.UserRepository;
 import com.softserve.itacademy.service.UserService;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @PostAuthorize("hasRole('ROLE_ADMIN') or returnObject.getEmail() == authentication.name")
     public User readById(long id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("User with id " + id + " not found"));
@@ -48,11 +52,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @PreFilter("hasRole('ROLE_ADMIN')")
     public void delete(long id) {
         userRepository.delete(readById(id));
     }
 
     @Override
+    @PostFilter("hasRole('ROLE_ADMIN') or filterObject.getEmail() == authentication.name")
     public List<User> getAll() {
         List<User> users = userRepository.findAll();
         return users.isEmpty() ? new ArrayList<>() : users;
