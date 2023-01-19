@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
@@ -61,7 +61,7 @@
                         <span th:each="role : ${roles}">
                             <option th:if="${role.id == user.role.id}" th:selected="${true}" th:text="${role.name.substring(0, 1) + role.name.substring(1).toLowerCase()}"
                                     th:value="${role.id}"/>
-                            <option th:text="${role.name.substring(0, 1) + role.name.substring(1).toLowerCase()}" th:unless="${role.id == user.role.id}"
+                            <option sec:authorize="hasAuthority('ROLE_ADMIN')" th:text="${role.name.substring(0, 1) + role.name.substring(1).toLowerCase()}" th:unless="${role.id == user.role.id}"
                                     th:value="${role.id}"/>
                         </span>
                 </select>

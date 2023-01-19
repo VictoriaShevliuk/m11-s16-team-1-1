@@ -4,7 +4,9 @@ import com.softserve.itacademy.exception.NullEntityReferenceException;
 import com.softserve.itacademy.model.ToDo;
 import com.softserve.itacademy.repository.ToDoRepository;
 import com.softserve.itacademy.service.ToDoService;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    @PostFilter("filterObject == authentication.principal")
+    @PostAuthorize("returnObject.owner.email == authentication.name")
     public ToDo readById(long id) {
         return todoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("ToDo with id " + id + " not found"));
